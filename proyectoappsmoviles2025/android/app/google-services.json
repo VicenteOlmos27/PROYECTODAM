@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "320159561206",
+    "project_id": "proyectodam-851bd",
+    "storage_bucket": "proyectodam-851bd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:320159561206:android:78852d441487db69a983d7",
+        "android_client_info": {
+          "package_name": "com.example.proyectoappsmoviles2025"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-8AyhnjQSjzAddegBYT0LIj-tkT3vbRQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
