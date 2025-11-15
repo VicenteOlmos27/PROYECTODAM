@@ -1,40 +1,42 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:proyectoappsmoviles2025/constants.dart';
 
 class MisEventosPage extends StatelessWidget {
   final String autor;
 
-  const MisEventosPage({super.key, required this.autor});
+
+  MisEventosPage({super.key, required this.autor});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Mis eventos", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.deepPurple,
+        title: Text("Mis eventos", style: TextStyle(color: Color(kColorBlanco))),
+        backgroundColor: Color(kColorVioleta),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection("Eventos")
-            .where("autor", isEqualTo: autor) 
+            .where("autor", isEqualTo: autor)
             .orderBy("Fecha")
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-              return Center(
+            return Center(
               child: Text("Error al cargar eventos: ${snapshot.error}"),
             );
           }
 
-
           if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator());
           }
 
           final eventos = snapshot.data!.docs;
 
           if (eventos.isEmpty) {
-            return const Center(
+            return Center(
               child: Text("No has creado eventos aún"),
             );
           }
@@ -42,20 +44,61 @@ class MisEventosPage extends StatelessWidget {
           return ListView.builder(
             itemCount: eventos.length,
             itemBuilder: (context, i) {
-              final evento =
-                  eventos[i].data() as Map<String, dynamic>? ?? {};
+              final evento = eventos[i].data() as Map<String, dynamic>? ?? {};
+              final id = eventos[i].id;
 
-              return Card(
-                margin: const EdgeInsets.all(10),
-                child: ListTile(
-                  title: Text(evento['titulo']),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("📅 ${evento['Fecha']}"),
-                      Text("📍 ${evento['lugar']}"),
-                      Text("🏷 ${evento['categoria']}"),
-                    ],
+              return Slidable(
+                key: ValueKey(id),
+                endActionPane: ActionPane(
+                  motion: ScrollMotion(),
+                  children: [
+                    SlidableAction(
+                      icon: Icons.delete,
+                      backgroundColor: Colors.red,
+                      label: "Borrar",
+                      onPressed: (context) async {
+                        final confirmar = await showDialog<bool>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text("Confirmar borrado"),
+                            content: Text(
+                              '¿Deseas eliminar el evento "${evento['titulo']}"?',
+                            ),
+                            actions: [
+                              TextButton(
+                                child: Text("Cancelar"),
+                                onPressed: () => Navigator.pop(context, false),
+                              ),
+                              TextButton(
+                                child: Text("Borrar"),
+                                onPressed: () => Navigator.pop(context, true),
+                              ),
+                            ],
+                          ),
+                        );
+
+                        if (confirmar == true) {
+                          await FirebaseFirestore.instance
+                              .collection("Eventos")
+                              .doc(id)
+                              .delete();
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                child: Card(
+                  margin: EdgeInsets.all(10),
+                  child: ListTile(
+                    title: Text(evento['titulo']),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("📅 ${evento['Fecha']}"),
+                        Text("📍 ${evento['lugar']}"),
+                        Text("🏷 ${evento['categoria']}"),
+                      ],
+                    ),
                   ),
                 ),
               );

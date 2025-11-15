@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FsService{
   
   //OBTENER TODOS LOS EVENTOS
-  Stream<QuerySnapshot> productos() {
+  Stream<QuerySnapshot> eventos() {
     return FirebaseFirestore.instance.collection('Eventos').snapshots();
   }
 

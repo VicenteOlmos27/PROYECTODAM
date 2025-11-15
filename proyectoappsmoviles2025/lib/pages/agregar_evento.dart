@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:proyectoappsmoviles2025/constants.dart';
 import 'package:proyectoappsmoviles2025/services/fs_services.dart';
 
 class AgregarEvento extends StatefulWidget {
   final String autor;
-  const AgregarEvento({super.key, required this.autor});
+  AgregarEvento({super.key, required this.autor});
 
   @override
   State<AgregarEvento> createState() => _AgregarEventoState();
@@ -16,38 +17,55 @@ class _AgregarEventoState extends State<AgregarEvento> {
   final tituloCtrl = TextEditingController();
   final fechaCtrl = TextEditingController();
   final lugarCtrl = TextEditingController();
+
   String? categoriaSeleccionada;
+  DateTime? fechaSeleccionada;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Agregar Evento")),
+      appBar: AppBar(
+        title: Text("Agregar Evento"),
+        backgroundColor: Color(kColorVioleta),
+        foregroundColor: Color(kColorBlanco),
+      ),
+
       body: Container(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
             colors: [
-              Colors.purple.shade300,
-              Colors.deepPurple.shade700,
+              Color(kColorNegro),
+              Color(kColorRosado),
             ],
           ),
         ),
+
         child: Container(
-          padding: const EdgeInsets.all(14),
+          padding: EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: const Color(0xEEFFFFFF),
+            color: Color(kColorBlanco),
             borderRadius: BorderRadius.circular(15),
           ),
+
           child: Form(
             key: formKey,
             child: ListView(
               children: [
-                _campo(
+
+                //CAMPO TITULO
+                Container(
+                  margin: EdgeInsets.only(bottom: 12),
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: TextFormField(
                     controller: tituloCtrl,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Título del evento',
                       border: InputBorder.none,
                     ),
@@ -56,22 +74,68 @@ class _AgregarEventoState extends State<AgregarEvento> {
                   ),
                 ),
 
-                _campo(
+                //CAMPO FECHA
+                Container(
+                  margin: EdgeInsets.only(bottom: 12),
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: TextFormField(
                     controller: fechaCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Fecha (DD/MM/AAAA hh:mm)',
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      labelText: 'Fecha del evento',
                       border: InputBorder.none,
                     ),
+                    onTap: () async {
+                      DateTime? fecha = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime(2100),
+                      );
+
+                      if (fecha != null) {
+                        TimeOfDay? hora = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+
+                        if (hora != null) {
+                          fecha = DateTime(
+                            fecha.year,
+                            fecha.month,
+                            fecha.day,
+                            hora.hour,
+                            hora.minute,
+                          );
+
+                          setState(() {
+                            fechaSeleccionada = fecha;
+                            fechaCtrl.text =
+                                "${fecha?.day}/${fecha?.month}/${fecha?.year} ${hora.format(context)}";
+                          });
+                        }
+                      }
+                    },
                     validator: (v) =>
                         v!.isEmpty ? "Indique la fecha" : null,
                   ),
                 ),
 
-                _campo(
+                //CAMPO LUGAR
+                Container(
+                  margin: EdgeInsets.only(bottom: 12),
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: TextFormField(
                     controller: lugarCtrl,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Lugar',
                       border: InputBorder.none,
                     ),
@@ -80,24 +144,30 @@ class _AgregarEventoState extends State<AgregarEvento> {
                   ),
                 ),
 
-                _campo(
+                //MOSTRAR EL CAMPO CATEGORIA
+                Container(
+                  margin: EdgeInsets.only(bottom: 12),
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: FutureBuilder(
                     future: FsService().categorias(),
-                    builder: (context,
-                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Text("Cargando categorías...");
-                        }
+                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Text("Cargando categorías...");
+                      }
 
-                        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                          return const Text("No hay categorías");
-                        }
-                        
+                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                        return Text("No hay categorías");
+                      }
+
                       final categorias = snapshot.data!.docs;
 
                       return DropdownButtonFormField(
                         value: categoriaSeleccionada,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Categoría',
                           border: InputBorder.none,
                         ),
@@ -107,9 +177,8 @@ class _AgregarEventoState extends State<AgregarEvento> {
                             child: Text(c['categoria']),
                           );
                         }).toList(),
-                        validator: (v) => v == null
-                            ? "Seleccione una categoría"
-                            : null,
+                        validator: (v) =>
+                            v == null ? "Seleccione una categoría" : null,
                         onChanged: (valor) {
                           categoriaSeleccionada = valor.toString();
                         },
@@ -118,12 +187,13 @@ class _AgregarEventoState extends State<AgregarEvento> {
                   ),
                 ),
 
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
 
+                //BOTON GUARDAR
                 FilledButton(
                   style: FilledButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    backgroundColor: Color(kColorVioleta),
+                    padding: EdgeInsets.symmetric(vertical: 12),
                   ),
                   onPressed: () async {
                     if (!formKey.currentState!.validate()) return;
@@ -132,7 +202,7 @@ class _AgregarEventoState extends State<AgregarEvento> {
                         .collection("Eventos")
                         .add({
                       "titulo": tituloCtrl.text.trim(),
-                      "Fecha": fechaCtrl.text.trim(),
+                      "Fecha": Timestamp.fromDate(fechaSeleccionada!),
                       "lugar": lugarCtrl.text.trim(),
                       "categoria": categoriaSeleccionada,
                       "autor": widget.autor.trim(),
@@ -140,7 +210,7 @@ class _AgregarEventoState extends State<AgregarEvento> {
 
                     Navigator.pop(context);
                   },
-                  child: const Text(
+                  child: Text(
                     "Guardar Evento",
                     style: TextStyle(fontSize: 17),
                   ),
@@ -150,19 +220,6 @@ class _AgregarEventoState extends State<AgregarEvento> {
           ),
         ),
       ),
-    );
-  }
-
-  /// Widget reutilizable que crea un "campo" visual como en tu ejemplo
-  Widget _campo({required Widget child}) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: child,
     );
   }
 }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:proyectoappsmoviles2025/constants.dart';
 
 class DetalleEvento extends StatelessWidget {
   final Map<String, dynamic> evento;
 
-  const DetalleEvento({super.key, required this.evento});
+  DetalleEvento({super.key, required this.evento});
 
   @override
   Widget build(BuildContext context) {
@@ -11,16 +12,16 @@ class DetalleEvento extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           evento['titulo'],
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(color: Color(kColorBlanco)),
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Color(kColorVioleta),
       ),
 
       /// CENTRAR EL CUADRO EN LA PANTALLA
       body: Center(
         child: Container(
-          width: 330, // tamaño fijo para verse agradable
-          padding: const EdgeInsets.all(24),
+          width: 330, 
+          padding: EdgeInsets.all(24),
 
           decoration: BoxDecoration(
             color: Colors.white,
@@ -29,7 +30,7 @@ class DetalleEvento extends StatelessWidget {
               BoxShadow(
                 color: Colors.black.withOpacity(0.15),
                 blurRadius: 10,
-                offset: const Offset(0, 4),
+                offset: Offset(0, 4),
               )
             ],
           ),
@@ -40,35 +41,35 @@ class DetalleEvento extends StatelessWidget {
             children: [
               Text(
                 evento['titulo'],
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
 
               Text(
-                "📅 Fecha: ${evento['Fecha']}",
-                style: const TextStyle(fontSize: 16),
+                "Fecha: ${evento['Fecha']}",
+                style: TextStyle(fontSize: 16),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
 
               Text(
-                "📍 Lugar: ${evento['lugar']}",
-                style: const TextStyle(fontSize: 16),
+                "Lugar: ${evento['lugar']}",
+                style: TextStyle(fontSize: 16),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
 
               Text(
-                "🏷 Categoría: ${evento['categoria']}",
-                style: const TextStyle(fontSize: 16),
+                "Categoría: ${evento['categoria']}",
+                style: TextStyle(fontSize: 16),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
 
               Text(
-                "👤 Autor: ${evento['autor']}",
-                style: const TextStyle(fontSize: 16),
+                "Autor: ${evento['autor']}",
+                style: TextStyle(fontSize: 16),
               ),
             ],
           ),

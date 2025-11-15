@@ -1,14 +1,11 @@
-// -------------------- PAGINA DE INICIO --------------------
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:proyectoappsmoviles2025/constants.dart';
 import 'package:proyectoappsmoviles2025/pages/detalle_evento.dart';
 import 'package:proyectoappsmoviles2025/pages/mis_eventos_page.dart';
-import 'package:proyectoappsmoviles2025/pages/pagina_login.dart';
-import 'package:proyectoappsmoviles2025/utils/apps_utils.dart';
-
+import 'package:proyectoappsmoviles2025/services/auth_services.dart';
 import 'agregar_evento.dart';
 
 class PaginaInicio extends StatelessWidget {
@@ -18,16 +15,15 @@ class PaginaInicio extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // -------------------- APPBAR --------------------
       appBar: AppBar(
-        title: const Text("Eventos", style: TextStyle(color: Colors.white),),
+        title: Text("Eventos", style: TextStyle(color: Color(kColorBlanco)),),
         centerTitle: true,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Colors.deepPurple.shade400,
-                Colors.indigo.shade500,
+                Color(kColorNegro),
+                Color(kColorRosado),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -37,11 +33,11 @@ class PaginaInicio extends StatelessWidget {
         actions: [
           PopupMenuButton(
             itemBuilder: (context) => [
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: "mis_eventos",
                 child: Text("Mis eventos"),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: "logout",
                 child: Text("Cerrar Sesión"),
               ),
@@ -59,50 +55,45 @@ class PaginaInicio extends StatelessWidget {
               if (value == "logout") {
                 await GoogleSignIn().signOut();
                 await FirebaseAuth.instance.signOut();
-
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => PaginaLogin()),
-                );
               }
             },
           ),
         ],
       ),
 
-      // -------------------- CUERPO --------------------
       body: Column(
         children: [
-          // -------------------- HEADER USUARIO --------------------
+          //HEADER DEL USUARIO
           Container(
-            padding: const EdgeInsets.all(16),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.indigo.shade700,
-                  Colors.indigo.shade400,
-                ],
+              padding: EdgeInsets.all(10),
+              color: Color(kColorVioleta),
+              width: double.infinity,
+              child: FutureBuilder<User?>(
+                future: AuthService().currentUser(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting) {
+                    return Text(
+                      'Cargando usuario...',
+                      style: TextStyle(color: Color(kColorBlanco)),
+                    );
+                  }
+                  return Row(
+                    children: [
+                      Icon(Icons.person, color: Color(kColorBlanco), size: 30),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          snapshot.data!.email ?? "Usuario desconocido",
+                          style: TextStyle(color: Color(kColorBlanco), fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
-            child: Row(
-              children: [
-                const Icon(Icons.person, color: Colors.white, size: 30),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    usuario.email ?? "Usuario desconocido",
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
 
-          // -------------------- LISTA DE EVENTOS --------------------
+          //LISTAR LOS EVENTOS
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
@@ -111,18 +102,18 @@ class PaginaInicio extends StatelessWidget {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  return const Center(
+                  return Center(
                       child: Text("Error al cargar eventos"));
                 }
 
                 if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(child: CircularProgressIndicator());
                 }
 
                 final eventos = snapshot.data!.docs;
 
                 if (eventos.isEmpty) {
-                  return const Center(
+                  return Center(
                     child: Text(
                       "No hay eventos aún",
                       style: TextStyle(fontSize: 16),
@@ -134,73 +125,43 @@ class PaginaInicio extends StatelessWidget {
                   separatorBuilder: (context, index) => const SizedBox(height: 6),
                   itemCount: eventos.length,
                   itemBuilder: (context, index) {
-                    final evento = eventos[index].data() as Map<String, dynamic>? ?? {};
-                    final id = eventos[index].id;
-
-                    return Slidable(
-                      key: ValueKey(id),
-                      endActionPane: ActionPane(
-                        motion: const ScrollMotion(),
-                        children: [
-                          SlidableAction(
-                            icon: Icons.delete,
-                            backgroundColor: Colors.red,
-                            label: "Borrar",
-                            onPressed: (context) async {
-                              bool aceptaBorrar = await AppsUtils.mostrarConfirmacion(
-                                context,
-                                'Confirmar Borrado',
-                                '¿Deseas borrar el evento "${evento['titulo']}"?',
-                              );
-
-                              if (aceptaBorrar) {
-                                await FirebaseFirestore.instance
-                                    .collection('Eventos')
-                                    .doc(id)
-                                    .delete();
-
-                      
-                              }
-                            },
-                          ),
+                  final evento = eventos[index].data() as Map<String, dynamic>? ?? {};
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Color(kColorBlanco),
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(kColorNegro),
+                            blurRadius: 6,
+                            offset: Offset(0, 3),
+                          )
                         ],
                       ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.08),
-                              blurRadius: 6,
-                              offset: const Offset(0, 3),
-                            )
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.indigo.shade300,
+                          child: Icon(Icons.event, color: Colors.white),
+                        ),
+                        title: Text(
+                          evento['titulo'] ?? "Sin título",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("🏷 ${evento['categoria'] ?? "Sin categoría"}"),
                           ],
                         ),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.indigo.shade300,
-                            child: const Icon(Icons.event, color: Colors.white),
-                          ),
-                          title: Text(
-                            evento['titulo'] ?? "Sin título",
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("🏷 ${evento['categoria'] ?? "Sin categoría"}"),
-                            ],
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                              builder: (context) => DetalleEvento(evento: evento),
-                              ),
-                            );
-                          },
-                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  DetalleEvento(evento: evento),
+                            ),
+                          );
+                        },
                       ),
                     );
                   },
@@ -210,12 +171,10 @@ class PaginaInicio extends StatelessWidget {
           ),
         ],
       ),
-
-      // -------------------- BOTÓN FLOTANTE --------------------
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.indigo,
         foregroundColor: Colors.white,
-        child: const Icon(Icons.add),
+        child: Icon(Icons.add),
         onPressed: () {
           Navigator.push(
             context,
