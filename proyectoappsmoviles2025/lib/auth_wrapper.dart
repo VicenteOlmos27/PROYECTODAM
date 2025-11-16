@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:proyectoappsmoviles2025/pages/pagina_inicio.dart';
+import 'package:proyectoappsmoviles2025/pages/base_page.dart';
 import 'package:proyectoappsmoviles2025/pages/pagina_login.dart';
 
 class AuthWrapper extends StatelessWidget {
@@ -18,7 +18,7 @@ class AuthWrapper extends StatelessWidget {
         }
 
         if (snapshot.hasData) {
-          return PaginaInicio(usuario: snapshot.data!);
+          return BasePage(usuario: snapshot.data!);
         }
 
         return PaginaLogin();

@@ -1,10 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:proyectoappsmoviles2025/constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DetalleEvento extends StatelessWidget {
   final Map<String, dynamic> evento;
 
-  DetalleEvento({super.key, required this.evento});
+  const DetalleEvento({super.key, required this.evento});
+
+  String _formatearFecha(dynamic fechaRaw) {
+    try {
+      if (fechaRaw is Timestamp) {
+        final fecha = fechaRaw.toDate();
+        return DateFormat('dd/MM/yyyy HH:mm').format(fecha);
+      }
+
+      if (fechaRaw is String) {
+        return fechaRaw;
+      }
+
+      return "Fecha no válida";
+    } catch (e) {
+      return "Fecha no válida";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,13 +35,10 @@ class DetalleEvento extends StatelessWidget {
         ),
         backgroundColor: Color(kColorVioleta),
       ),
-
-      /// CENTRAR EL CUADRO EN LA PANTALLA
       body: Center(
         child: Container(
-          width: 330, 
+          width: 330,
           padding: EdgeInsets.all(24),
-
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(18),
@@ -34,9 +50,8 @@ class DetalleEvento extends StatelessWidget {
               )
             ],
           ),
-
           child: Column(
-            mainAxisSize: MainAxisSize.min, 
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
@@ -50,7 +65,7 @@ class DetalleEvento extends StatelessWidget {
               SizedBox(height: 16),
 
               Text(
-                "Fecha: ${evento['Fecha']}",
+                "Fecha: ${_formatearFecha(evento['Fecha'])}",
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 8),

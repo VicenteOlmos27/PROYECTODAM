@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -7,7 +6,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:proyectoappsmoviles2025/constants.dart';
 
 class PaginaLogin extends StatefulWidget {
-  PaginaLogin({super.key});
+  const PaginaLogin({super.key});
 
   @override
   State<PaginaLogin> createState() => _PaginaLoginState();

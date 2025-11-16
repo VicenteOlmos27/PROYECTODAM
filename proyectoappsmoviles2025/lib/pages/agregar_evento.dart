@@ -5,7 +5,7 @@ import 'package:proyectoappsmoviles2025/services/fs_services.dart';
 
 class AgregarEvento extends StatefulWidget {
   final String autor;
-  AgregarEvento({super.key, required this.autor});
+  const AgregarEvento({super.key, required this.autor});
 
   @override
   State<AgregarEvento> createState() => _AgregarEventoState();
@@ -14,9 +14,9 @@ class AgregarEvento extends StatefulWidget {
 class _AgregarEventoState extends State<AgregarEvento> {
   final formKey = GlobalKey<FormState>();
 
-  final tituloCtrl = TextEditingController();
-  final fechaCtrl = TextEditingController();
-  final lugarCtrl = TextEditingController();
+  TextEditingController tituloCtrl = TextEditingController();
+  TextEditingController fechaCtrl = TextEditingController();
+  TextEditingController lugarCtrl = TextEditingController();
 
   String? categoriaSeleccionada;
   DateTime? fechaSeleccionada;

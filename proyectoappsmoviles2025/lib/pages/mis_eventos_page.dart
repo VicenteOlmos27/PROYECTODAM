@@ -1,13 +1,30 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 import 'package:proyectoappsmoviles2025/constants.dart';
 
 class MisEventosPage extends StatelessWidget {
   final String autor;
 
+  const MisEventosPage({super.key, required this.autor});
 
-  MisEventosPage({super.key, required this.autor});
+  String _formatearFecha(dynamic fechaRaw) {
+    try {
+      if (fechaRaw is Timestamp) {
+        final fecha = fechaRaw.toDate();
+        return DateFormat('dd/MM/yyyy HH:mm').format(fecha);
+      }
+
+      if (fechaRaw is String) {
+        return fechaRaw;
+      }
+
+      return "Fecha no válida";
+    } catch (e) {
+      return "Fecha no válida";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +61,7 @@ class MisEventosPage extends StatelessWidget {
           return ListView.builder(
             itemCount: eventos.length,
             itemBuilder: (context, i) {
-              final evento = eventos[i].data() as Map<String, dynamic>? ?? {};
+              final evento = eventos[i].data() as Map<String, dynamic>; 
               final id = eventos[i].id;
 
               return Slidable(
@@ -94,7 +111,7 @@ class MisEventosPage extends StatelessWidget {
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("📅 ${evento['Fecha']}"),
+                        Text("📅 ${_formatearFecha(evento['Fecha'])}"),
                         Text("📍 ${evento['lugar']}"),
                         Text("🏷 ${evento['categoria']}"),
                       ],

@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:proyectoappsmoviles2025/constants.dart';
 import 'package:proyectoappsmoviles2025/pages/detalle_evento.dart';
-import 'package:proyectoappsmoviles2025/pages/mis_eventos_page.dart';
 import 'package:proyectoappsmoviles2025/services/auth_services.dart';
-import 'agregar_evento.dart';
 
 class PaginaInicio extends StatelessWidget {
   final User usuario;
@@ -34,24 +32,11 @@ class PaginaInicio extends StatelessWidget {
           PopupMenuButton(
             itemBuilder: (context) => [
               PopupMenuItem(
-                value: "mis_eventos",
-                child: Text("Mis eventos"),
-              ),
-              PopupMenuItem(
                 value: "logout",
                 child: Text("Cerrar Sesión"),
               ),
             ],
             onSelected: (value) async {
-              if (value == "mis_eventos") {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MisEventosPage(autor: usuario.email!),
-                  ),
-                );
-              }
-
               if (value == "logout") {
                 await GoogleSignIn().signOut();
                 await FirebaseAuth.instance.signOut();
@@ -70,7 +55,7 @@ class PaginaInicio extends StatelessWidget {
               width: double.infinity,
               child: FutureBuilder<User?>(
                 future: AuthService().currentUser(),
-                builder: (context, snapshot) {
+                builder: (context, AsyncSnapshot<User?> snapshot) {
                   if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting) {
                     return Text(
                       'Cargando usuario...',
@@ -83,7 +68,7 @@ class PaginaInicio extends StatelessWidget {
                       SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          snapshot.data!.email ?? "Usuario desconocido",
+                          snapshot.data!.email!,
                           style: TextStyle(color: Color(kColorBlanco), fontSize: 16),
                         ),
                       ),
@@ -125,7 +110,7 @@ class PaginaInicio extends StatelessWidget {
                   separatorBuilder: (context, index) => const SizedBox(height: 6),
                   itemCount: eventos.length,
                   itemBuilder: (context, index) {
-                  final evento = eventos[index].data() as Map<String, dynamic>? ?? {};
+                  final evento = eventos[index].data() as Map<String, dynamic>;
                     return Container(
                       decoration: BoxDecoration(
                         color: Color(kColorBlanco),
@@ -140,25 +125,24 @@ class PaginaInicio extends StatelessWidget {
                       ),
                       child: ListTile(
                         leading: CircleAvatar(
-                          backgroundColor: Colors.indigo.shade300,
-                          child: Icon(Icons.event, color: Colors.white),
+                          backgroundColor: Color(kColorVioleta),
+                          child: Icon(Icons.event, color: Color(kColorBlanco)),
                         ),
                         title: Text(
-                          evento['titulo'] ?? "Sin título",
+                          evento['titulo'],
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("🏷 ${evento['categoria'] ?? "Sin categoría"}"),
+                            Text("🏷 ${evento['categoria']}"),
                           ],
                         ),
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  DetalleEvento(evento: evento),
+                              builder: (context) => DetalleEvento(evento: evento),
                             ),
                           );
                         },
@@ -170,20 +154,6 @@ class PaginaInicio extends StatelessWidget {
             ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.indigo,
-        foregroundColor: Colors.white,
-        child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  AgregarEvento(autor: usuario.email ?? "desconocido"),
-            ),
-          );
-        },
       ),
     );
   }
