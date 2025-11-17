@@ -60,7 +60,7 @@ class _AgregarEventoState extends State<AgregarEvento> {
                   margin: EdgeInsets.only(bottom: 12),
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Color(kColorBlanco),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: TextFormField(
@@ -69,8 +69,7 @@ class _AgregarEventoState extends State<AgregarEvento> {
                       labelText: 'Título del evento',
                       border: InputBorder.none,
                     ),
-                    validator: (v) =>
-                        v!.isEmpty ? "Indique un título" : null,
+                    validator: (v) => v!.isEmpty ? "Indique un título" : null,
                   ),
                 ),
 
@@ -79,7 +78,7 @@ class _AgregarEventoState extends State<AgregarEvento> {
                   margin: EdgeInsets.only(bottom: 12),
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Color(kColorBlanco),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: TextFormField(
@@ -120,8 +119,7 @@ class _AgregarEventoState extends State<AgregarEvento> {
                         }
                       }
                     },
-                    validator: (v) =>
-                        v!.isEmpty ? "Indique la fecha" : null,
+                    validator: (v) => v!.isEmpty ? "Indique la fecha" : null,
                   ),
                 ),
 
@@ -130,7 +128,7 @@ class _AgregarEventoState extends State<AgregarEvento> {
                   margin: EdgeInsets.only(bottom: 12),
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Color(kColorBlanco),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: TextFormField(
@@ -139,8 +137,7 @@ class _AgregarEventoState extends State<AgregarEvento> {
                       labelText: 'Lugar',
                       border: InputBorder.none,
                     ),
-                    validator: (v) =>
-                        v!.isEmpty ? "Indique el lugar" : null,
+                    validator: (v) => v!.isEmpty ? "Indique el lugar" : null,
                   ),
                 ),
 
@@ -149,7 +146,7 @@ class _AgregarEventoState extends State<AgregarEvento> {
                   margin: EdgeInsets.only(bottom: 12),
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Color(kColorBlanco),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: FutureBuilder(
@@ -172,13 +169,19 @@ class _AgregarEventoState extends State<AgregarEvento> {
                           border: InputBorder.none,
                         ),
                         items: categorias.map((c) {
+                          final foto = c['Foto'];
                           return DropdownMenuItem(
                             value: c['categoria'].toString(),
-                            child: Text(c['categoria']),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(c['categoria']),
+                                Image.asset("assets/images/$foto", width: 32,height: 32,fit: BoxFit.cover), 
+                              ],
+                            )
                           );
                         }).toList(),
-                        validator: (v) =>
-                            v == null ? "Seleccione una categoría" : null,
+                        validator: (v) => v == null ? "Seleccione una categoría" : null,
                         onChanged: (valor) {
                           categoriaSeleccionada = valor.toString();
                         },

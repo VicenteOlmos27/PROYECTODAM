@@ -54,7 +54,7 @@ class _BasePageState extends State<BasePage> {
             context,
             MaterialPageRoute(
               builder: (context) => AgregarEvento(
-                autor: widget.usuario.email ?? "desconocido",
+                autor: widget.usuario.email!,
               ),
             ),
           );
