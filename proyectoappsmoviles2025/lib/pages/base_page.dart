@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:proyectoappsmoviles2025/pages/mis_eventos_page.dart';
 import 'package:proyectoappsmoviles2025/pages/pagina_inicio.dart';
 import 'package:proyectoappsmoviles2025/pages/agregar_evento.dart';
 import 'package:proyectoappsmoviles2025/constants.dart';
 
 class BasePage extends StatefulWidget {
-  final User usuario;
 
-  const BasePage({super.key, required this.usuario});
+  const BasePage({super.key, required});
 
   @override
   State<BasePage> createState() => _BasePageState();
@@ -23,8 +21,8 @@ class _BasePageState extends State<BasePage> {
       body: IndexedStack(
         index: _paginaSeleccionada,
         children: [
-          PaginaInicio(usuario: widget.usuario),
-          MisEventosPage(autor: widget.usuario.email!),
+          PaginaInicio(),
+          MisEventosPage(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -53,9 +51,7 @@ class _BasePageState extends State<BasePage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AgregarEvento(
-                autor: widget.usuario.email!,
-              ),
+              builder: (context) => AgregarEvento(),
             ),
           );
         },

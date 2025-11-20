@@ -15,15 +15,15 @@ class AppsUtils {
         return AlertDialog(
           backgroundColor: Color(kColorVioleta),
           iconColor: Color(kColorBlanco),
-          title: Text(titulo),
-          content: Text(mensaje),
+          title: Text(titulo, style: TextStyle(color: Color(kColorBlanco)),),
+          content: Text(mensaje, style: TextStyle(color: Color(kColorBlanco)),),
           actions: [
             TextButton(
-              child: Text('CANCELAR'),
+              child: Text('CANCELAR', style: TextStyle(color: Color(kColorBlanco)),),
               onPressed: () => Navigator.pop(context, false),
             ),
             OutlinedButton(
-              child: Text('ACEPTAR'),
+              child: Text('ACEPTAR', style: TextStyle(color: Color(kColorBlanco)),),
               onPressed: () => Navigator.pop(context, true),
             ),
           ],

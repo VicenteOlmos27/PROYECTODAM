@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -15,38 +14,19 @@ class PaginaLogin extends StatefulWidget {
 class _PaginaLoginState extends State<PaginaLogin> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-  bool _cargando = false;
 
-  Future<void> iniciarSesionConGoogle() async {
-  setState(() {
-    _cargando = true;
-  });
+  Future<void> iniciarConGoogle() async {
+    final cuenta = await _googleSignIn.signIn();
+    if (cuenta == null) return;
 
-  try {
-    final cuentaGoogle = await _googleSignIn.signIn();
-    if (cuentaGoogle == null) return; 
-
-    final autenticacionGoogle = await cuentaGoogle.authentication;
+    final autenticacionGoogle = await cuenta.authentication;
 
     final credencial = GoogleAuthProvider.credential(
       accessToken: autenticacionGoogle.accessToken,
       idToken: autenticacionGoogle.idToken,
     );
-
     await _auth.signInWithCredential(credencial);
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error al iniciar sesión: $e')),
-    );
-  } finally {
-    if (mounted) {
-      setState(() {
-        _cargando = false;
-      });
-    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -54,53 +34,39 @@ class _PaginaLoginState extends State<PaginaLogin> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
             colors: [Color(kColorNegro), Color(kColorRosado)],
           ),
         ),
         child: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(bottom: 40),
-                  child: Icon(
-                    MdiIcons.calendar,
-                    size: 120,
-                    color: Color(kColorBlanco),
-                  ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(MdiIcons.calendar, size: 120, color: Color(kColorBlanco)),
+              SizedBox(height: 20),
+              Text(
+                "CreaTuEvento.com",
+                style: TextStyle(
+                  color: Color(kColorBlanco),
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
                 ),
-                Text(
-                  "CreaTuEvento.com",
-                  style: TextStyle(
-                    color: Color(kColorBlanco),
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+              ),
+              SizedBox(height: 50),
+              ElevatedButton.icon(
+                      icon: Icon(Icons.login),
+                      label: Text("Iniciar sesión con Google"),
+                      style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(kColorBlanco),
+                      foregroundColor: Color(kColorNegro),
+                      padding:
+                      EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
                   ),
-                ),
-                SizedBox(height: 50),
-                _cargando
-                    ? CircularProgressIndicator(color: Color(kColorBlanco))
-                    : ElevatedButton.icon(
-                        icon: Icon(Icons.login),
-                        label: Text(
-                          "Iniciar sesión con Google",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(kColorBlanco),
-                          foregroundColor: Color(kColorNegro),
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        onPressed: iniciarSesionConGoogle,
-                      ),
-              ],
-            ),
+                onPressed: iniciarConGoogle,
+              ),
+            ],
           ),
         ),
       ),

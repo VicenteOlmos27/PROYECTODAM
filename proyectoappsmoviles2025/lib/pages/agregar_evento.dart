@@ -4,8 +4,7 @@ import 'package:proyectoappsmoviles2025/constants.dart';
 import 'package:proyectoappsmoviles2025/services/fs_services.dart';
 
 class AgregarEvento extends StatefulWidget {
-  final String autor;
-  const AgregarEvento({super.key, required this.autor});
+  const AgregarEvento({super.key, required});
 
   @override
   State<AgregarEvento> createState() => _AgregarEventoState();
@@ -201,15 +200,12 @@ class _AgregarEventoState extends State<AgregarEvento> {
                   onPressed: () async {
                     if (!formKey.currentState!.validate()) return;
 
-                    await FirebaseFirestore.instance
-                        .collection("Eventos")
-                        .add({
-                      "titulo": tituloCtrl.text.trim(),
-                      "Fecha": Timestamp.fromDate(fechaSeleccionada!),
-                      "lugar": lugarCtrl.text.trim(),
-                      "categoria": categoriaSeleccionada,
-                      "autor": widget.autor.trim(),
-                    });
+                    await FsService().agregarEvento(
+                      fechaSeleccionada!,
+                      categoriaSeleccionada!,
+                      lugarCtrl.text.trim(),
+                      tituloCtrl.text.trim(),
+                    );
 
                     Navigator.pop(context);
                   },

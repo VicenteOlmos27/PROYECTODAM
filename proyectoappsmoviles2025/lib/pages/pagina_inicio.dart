@@ -2,27 +2,25 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:proyectoappsmoviles2025/constants.dart';
 import 'package:proyectoappsmoviles2025/pages/detalle_evento.dart';
-import 'package:proyectoappsmoviles2025/services/auth_services.dart';
+import 'package:proyectoappsmoviles2025/services/fs_services.dart';
 
 class PaginaInicio extends StatelessWidget {
-  final User usuario;
-  const PaginaInicio({super.key, required this.usuario});
+  const PaginaInicio({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final usuario = FirebaseAuth.instance.currentUser; 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Eventos", style: TextStyle(color: Color(kColorBlanco)),),
+        title: Text("Eventos", style: TextStyle(color: Color(kColorBlanco))),
         centerTitle: true,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Color(kColorNegro),
-                Color(kColorRosado),
-              ],
+              colors: [Color(kColorNegro), Color(kColorRosado)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -31,10 +29,7 @@ class PaginaInicio extends StatelessWidget {
         actions: [
           PopupMenuButton(
             itemBuilder: (context) => [
-              PopupMenuItem(
-                value: "logout",
-                child: Text("Cerrar Sesión"),
-              ),
+              PopupMenuItem(value: "logout", child: Text("Cerrar Sesión")),
             ],
             onSelected: (value) async {
               if (value == "logout") {
@@ -42,111 +37,78 @@ class PaginaInicio extends StatelessWidget {
                 await FirebaseAuth.instance.signOut();
               }
             },
-          ),
+          )
         ],
       ),
 
       body: Column(
         children: [
-          //HEADER DEL USUARIO
           Container(
-              padding: EdgeInsets.all(10),
-              color: Color(kColorVioleta),
-              width: double.infinity,
-              child: FutureBuilder<User?>(
-                future: AuthService().currentUser(),
-                builder: (context, AsyncSnapshot<User?> snapshot) {
-                  if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting) {
-                    return Text(
-                      'Cargando usuario...',
-                      style: TextStyle(color: Color(kColorBlanco)),
-                    );
-                  }
-                  return Row(
-                    children: [
-                      Icon(Icons.person, color: Color(kColorBlanco), size: 30),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          snapshot.data!.email!,
-                          style: TextStyle(color: Color(kColorBlanco), fontSize: 16),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
+            padding: EdgeInsets.all(10),
+            color: Color(kColorVioleta),
+            width: double.infinity,
+            child: Row(
+              children: [
+                Icon(Icons.person, color: Color(kColorBlanco), size: 30),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    usuario?.email ?? "Usuario desconocido",
+                    style: TextStyle(
+                      color: Color(kColorBlanco),
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
             ),
+          ),
 
-          //LISTAR LOS EVENTOS
+          // LISTA DE EVENTOS
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('Eventos')
-                  .orderBy('Fecha')
-                  .snapshots(),
+              stream: FsService().eventos(), 
               builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(
-                      child: Text("Error al cargar eventos"));
+                if (!snapshot.hasData ||
+                    snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
                 }
 
-                if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
+                if (snapshot.hasError) {
+                  return Center(child: Text("Error al cargar eventos"));
                 }
 
                 final eventos = snapshot.data!.docs;
 
                 if (eventos.isEmpty) {
                   return Center(
-                    child: Text(
-                      "No hay eventos aún",
-                      style: TextStyle(fontSize: 16),
-                    ),
+                    child: Text("No hay eventos aún",
+                        style: TextStyle(fontSize: 16)),
                   );
                 }
 
                 return ListView.separated(
-                  separatorBuilder: (context, index) => const SizedBox(height: 6),
                   itemCount: eventos.length,
+                  separatorBuilder: (context, index) => Divider(),
                   itemBuilder: (context, index) {
-                  final evento = eventos[index].data() as Map<String, dynamic>;
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: Color(kColorBlanco),
-                        borderRadius: BorderRadius.circular(14),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(kColorNegro),
-                            blurRadius: 6,
-                            offset: Offset(0, 3),
-                          )
+                    var evento = eventos[index].data() as Map<String, dynamic>;
+                    return ListTile(
+                      leading: Icon(Icons.event, color: Color(kColorRosado)),
+                      title: Text(evento['titulo']),
+                      subtitle: Row(
+                        children: [
+                          Icon(MdiIcons.tag, color: Color(kColorVioleta), size: 15,),
+                          Text(evento['categoria']),
                         ],
                       ),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Color(kColorVioleta),
-                          child: Icon(Icons.event, color: Color(kColorBlanco)),
-                        ),
-                        title: Text(
-                          evento['titulo'],
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(" ${evento['categoria']}"),
-                          ],
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DetalleEvento(evento: evento),
-                            ),
-                          );
-                        },
-                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetalleEvento(evento: evento),
+                          ),
+                        );
+                      },
                     );
                   },
                 );

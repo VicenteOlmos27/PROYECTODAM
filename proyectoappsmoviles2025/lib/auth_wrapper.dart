@@ -18,7 +18,7 @@ class AuthWrapper extends StatelessWidget {
         }
 
         if (snapshot.hasData) {
-          return BasePage(usuario: snapshot.data!);
+          return BasePage();
         }
 
         return PaginaLogin();

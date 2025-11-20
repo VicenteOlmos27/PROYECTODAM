@@ -9,22 +9,11 @@ class DetalleEvento extends StatelessWidget {
 
   const DetalleEvento({super.key, required this.evento});
 
-  String _formatearFecha(dynamic fechaRaw) {
-    try {
-      if (fechaRaw is Timestamp) {
-        final fecha = fechaRaw.toDate();
-        return DateFormat('dd/MM/yyyy HH:mm').format(fecha);
-      }
+ String _formatearFecha(Timestamp fecha) {
+  DateTime fechaDateTime = fecha.toDate();
+  return DateFormat('dd/MM/yyyy HH:mm').format(fechaDateTime);
+}
 
-      if (fechaRaw is String) {
-        return fechaRaw;
-      }
-
-      return "Fecha no válida";
-    } catch (e) {
-      return "Fecha no válida";
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

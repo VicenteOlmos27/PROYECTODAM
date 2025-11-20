@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class FsService{
   
@@ -9,14 +10,14 @@ class FsService{
 
     //AGREGAR EVENTO
 Future<void> agregarEvento(
-  String fecha,
-  String autor,
+  DateTime fecha,
   String categoria,
   String lugar,
   String titulo,
 ) {
+  final autor = FirebaseAuth.instance.currentUser?.email;
   return FirebaseFirestore.instance.collection('Eventos').doc().set({
-    'Fecha' : fecha,
+    'Fecha' : Timestamp.fromDate(fecha),
     'autor': autor,
     'categoria' : categoria,
     'lugar' : lugar,
