@@ -53,9 +53,9 @@ class MisEventosPage extends StatelessWidget {
           return ListView.builder(
             itemCount: eventos.length,
             itemBuilder: (context, i) {
-              var doc = eventos[i];
-              var evento = doc.data() as Map<String, dynamic>;
-              var id = doc.id;
+              var doc = eventos[i]; //TOMO UN DOCUMENTO
+              var evento = doc.data() as Map<String, dynamic>; //SACO LA INFORMACION DEL DOCUMENTO
+              var id = doc.id; //OBTENGO EL ID DEL DOCUMENTO
              return Slidable(
                 key: ValueKey(id),
                 endActionPane: ActionPane(

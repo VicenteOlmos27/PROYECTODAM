@@ -88,35 +88,34 @@ class _AgregarEventoState extends State<AgregarEvento> {
                       border: InputBorder.none,
                     ),
                     onTap: () async {
-                      DateTime? fecha = await showDatePicker(
+                      final fecha = await showDatePicker(
                         context: context,
                         initialDate: DateTime.now(),
                         firstDate: DateTime(2020),
                         lastDate: DateTime(2100),
                       );
 
-                      if (fecha != null) {
-                        TimeOfDay? hora = await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay.now(),
-                        );
+                      if (fecha == null) return;
 
-                        if (hora != null) {
-                          fecha = DateTime(
-                            fecha.year,
-                            fecha.month,
-                            fecha.day,
-                            hora.hour,
-                            hora.minute,
-                          );
+                      final hora = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.now(),
+                      );
 
-                          setState(() {
-                            fechaSeleccionada = fecha;
-                            fechaCtrl.text =
-                                "${fecha?.day}/${fecha?.month}/${fecha?.year} ${hora.format(context)}";
-                          });
-                        }
-                      }
+                      if (hora == null) return;
+
+                      final fechaCompleta = DateTime(
+                        fecha.year,
+                        fecha.month,
+                        fecha.day,
+                        hora.hour,
+                        hora.minute,
+                      );
+
+                      setState(() {
+                        fechaSeleccionada = fechaCompleta;
+                        fechaCtrl.text = "${fecha.day}/${fecha.month}/${fecha.year} ${hora.format(context)}";
+                      });
                     },
                     validator: (v) => v!.isEmpty ? "Indique la fecha" : null,
                   ),
