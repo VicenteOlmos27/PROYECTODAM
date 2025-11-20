@@ -64,7 +64,6 @@ class _PaginaLoginState extends State<PaginaLogin> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Logo animado o icono grande
                 Container(
                   margin: EdgeInsets.only(bottom: 40),
                   child: Icon(

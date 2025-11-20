@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:proyectoappsmoviles2025/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -40,11 +41,11 @@ class DetalleEvento extends StatelessWidget {
           width: 330,
           padding: EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Color(kColorBlanco),
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.15),
+                color: Color(kColorNegro),
                 blurRadius: 10,
                 offset: Offset(0, 4),
               )
@@ -54,37 +55,44 @@ class DetalleEvento extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                evento['titulo'],
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                children: [
+                  Icon(MdiIcons.textBoxOutline, size: 28),
+                  SizedBox(width: 8),
+                  Text(evento['titulo'],style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,),),
+                ],
               ),
-
               SizedBox(height: 16),
-
-              Text(
-                "Fecha: ${_formatearFecha(evento['Fecha'])}",
-                style: TextStyle(fontSize: 16),
+              Row(
+                children: [
+                  Icon(MdiIcons.calendar, size: 22),
+                  SizedBox(width: 8),
+                  Text("Fecha: ${_formatearFecha(evento['Fecha'])}",style: TextStyle(fontSize: 16),),
+                ],
               ),
               SizedBox(height: 8),
-
-              Text(
-                "Lugar: ${evento['lugar']}",
-                style: TextStyle(fontSize: 16),
+              Row(
+                children: [
+                  Icon(MdiIcons.mapMarker, size: 22),
+                  SizedBox(width: 8),
+                  Text("Lugar: ${evento['lugar']}",style: TextStyle(fontSize: 16),),
+                ],
               ),
               SizedBox(height: 8),
-
-              Text(
-                "Categoría: ${evento['categoria']}",
-                style: TextStyle(fontSize: 16),
+              Row(
+                children: [
+                  Icon(MdiIcons.tag, size: 22),
+                  SizedBox(width: 8),
+                  Text("Categoría: ${evento['categoria']}",style: TextStyle(fontSize: 16),),
+                ],
               ),
-              SizedBox(height: 8),
-
-              Text(
-                "Autor: ${evento['autor']}",
-                style: TextStyle(fontSize: 16),
+              SizedBox(height: 10),
+              Row(
+                children: [
+                  Icon(MdiIcons.account, size: 22),
+                  SizedBox(width: 8),
+                  Text("Autor: ${evento['autor']}",style: TextStyle(fontSize: 13),),
+                ],
               ),
             ],
           ),

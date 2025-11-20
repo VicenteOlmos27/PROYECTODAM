@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proyectoappsmoviles2025/constants.dart';
 
 class AppsUtils {
 
@@ -12,8 +13,8 @@ class AppsUtils {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: Colors.white,
-          iconColor: Colors.white,
+          backgroundColor: Color(kColorVioleta),
+          iconColor: Color(kColorBlanco),
           title: Text(titulo),
           content: Text(mensaje),
           actions: [

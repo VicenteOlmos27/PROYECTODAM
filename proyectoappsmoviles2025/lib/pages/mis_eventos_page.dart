@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:proyectoappsmoviles2025/constants.dart';
 
 class MisEventosPage extends StatelessWidget {
@@ -71,7 +72,7 @@ class MisEventosPage extends StatelessWidget {
                   children: [
                     SlidableAction(
                       icon: Icons.delete,
-                      backgroundColor: Colors.red,
+                      backgroundColor: Color(kColorRosado),
                       label: "Borrar",
                       onPressed: (context) async {
                         final confirmar = await showDialog<bool>(
@@ -111,9 +112,27 @@ class MisEventosPage extends StatelessWidget {
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("📅 ${_formatearFecha(evento['Fecha'])}"),
-                        Text("📍 ${evento['lugar']}"),
-                        Text("🏷 ${evento['categoria']}"),
+                        Row(
+                          children: [
+                            Icon(MdiIcons.calendar, size: 20),
+                            SizedBox(width: 6),
+                            Text(_formatearFecha(evento['Fecha'])),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(MdiIcons.mapMarker, size: 20),
+                            SizedBox(width: 6),
+                            Text(evento['lugar']),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(MdiIcons.tag, size: 20),
+                            SizedBox(width: 6),
+                            Text(evento['categoria']),
+                          ],
+                        ),
                       ],
                     ),
                   ),
