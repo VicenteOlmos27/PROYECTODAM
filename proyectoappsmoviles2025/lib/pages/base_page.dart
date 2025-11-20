@@ -34,7 +34,7 @@ class _BasePageState extends State<BasePage> {
             _paginaSeleccionada = index;
           });
         },
-        items: const [
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Inicio',

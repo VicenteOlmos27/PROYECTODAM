@@ -24,7 +24,7 @@ class _PaginaLoginState extends State<PaginaLogin> {
 
   try {
     final cuentaGoogle = await _googleSignIn.signIn();
-    if (cuentaGoogle == null) return; //SI EL USUARIO CANCELA EL LOGIN
+    if (cuentaGoogle == null) return; 
 
     final autenticacionGoogle = await cuentaGoogle.authentication;
 
@@ -73,7 +73,6 @@ class _PaginaLoginState extends State<PaginaLogin> {
                     color: Color(kColorBlanco),
                   ),
                 ),
-                // Texto motivador
                 Text(
                   "CreaTuEvento.com",
                   style: TextStyle(

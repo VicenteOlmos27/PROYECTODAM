@@ -173,7 +173,7 @@ class _AgregarEventoState extends State<AgregarEvento> {
                           return DropdownMenuItem(
                             value: c['categoria'].toString(),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(c['categoria']),
                                 Image.asset("assets/images/$foto", width: 32,height: 32,fit: BoxFit.cover), 

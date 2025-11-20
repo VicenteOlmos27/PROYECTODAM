@@ -135,7 +135,7 @@ class PaginaInicio extends StatelessWidget {
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("🏷 ${evento['categoria']}"),
+                            Text(" ${evento['categoria']}"),
                           ],
                         ),
                         onTap: () {
